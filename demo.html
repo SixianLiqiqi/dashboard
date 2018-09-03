@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body{
+            text-align: center;
+        }
+        path{
+            stroke: #000;
+            stroke-width: 2px;
+        }
+
+        .dash-4{
+            fill: transparent;
+            stroke-linecap: round;
+            stroke-width: 5px;
+        }
+        .dash-4-base{
+            stroke: #666;
+        }
+        .dash-4-move{
+            stroke: #0fc;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+        /* 
+        stroke-dasharray：表示虚线描边。数组是虚线数组.
+
+        stroke-dashoffset：表示虚线的起始偏移,定义虚线描边的偏移量.（在路径开始的前面，看不到） 
+        */
+        
+        .dash-4-move.active{
+            animation: show 0.8s linear forwards;
+            /* forwards是停在动画最后的的那个画面 */
+        }
+        /* 0 -> 1000 */
+
+        @keyframes show {
+            to{
+                stroke-dashoffset: 0;
+            }
+        }
+    
+    </style>
+</head>
+<body>
+    <h2>仪表盘</h2>
+    <input type="text" id="input">
+    <br>
+    <svg width="400px" height="200px">
+        <path class="dash-4-base dash-4" d="M160 169 A 80 80 0 1 1 240 169"></path>
+        <path class="dash-4 dash-4-move" d="M160 169 A 80 80 0 1 1 240 169"></path>
+    </svg>
+
+    <script>
+        var ele = document.getElementById('input');
+        var svgPath = document.getElementsByClassName('dash-4-move')[0];
+
+        // 聚焦
+        ele.onfocus = function () {
+            svgPath.classList.remove('active');
+        };
+
+        // 失焦
+        ele.onblur = function () {
+            var num = parseInt(this.value);
+
+            // round() 方法可把一个数字舍入为最接近的整数
+            var allLen = Math.round(Math.PI*2*80*(5/6));
+            //                      2πR * 5/6 = L
+            var moveLen = Math.round(num/100*allLen);
+            //                       num% * L
+
+            // 设置动画
+            svgPath.style.strokeDasharray = moveLen + ' 1000';
+            // ! -> ' 1000'
+            // 虚线描边数组
+            // 绘制虚线: 一个参数时： 表示一段虚线长度和每段虚线之间的间距 
+            // 两个参数或者多个参数时：一个表示长度，一个表示间距
+
+            svgPath.style.strokeDashoffset = moveLen;
+            // 偏移量
+            // ←
+            //定义一条线，文本或元素距离（相当于基于position：relative；设置left值。
+            // 只是不像left单纯的基于x方向设置， stroke-dashoffset是基于svg路径设置的）
+
+            svgPath.classList.add('active');
+
+        };
+
+    </script>
+
+</body>
+</html>
